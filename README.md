@@ -4,7 +4,7 @@ The purpose of this project is to show what I've learned in Code Louisville C#.
 This project has been built out to provide the following functionality:
 
 * Create a bank account.
-* Make deposits, withdrawals, check balances and more in a the bank account created.
+* Make deposits, withdrawals, check balances, and more in the created bank account.
 
 ### Code Louisville Project Requirements
 
