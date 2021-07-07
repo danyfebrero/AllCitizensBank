@@ -1,10 +1,15 @@
 # All Citizens Bank
 
-The purpose of this project is to show what I've learned in Code Louisville C#.
-This project has been built out to provide the following functionality:
+The purpose of this project is to show what I've learned in Code Louisville C#:
+* OOP Principles (Inheritance, Polymorphism, Encapsulation, and Abstraction).
+* Streams and Data Processing.
 
+This project has been built out to provide the following functionality to the users:
 * Create a bank account.
-* Make deposits, withdrawals, check balances, and more in the created bank account.
+* Check balances from 1 or 2 accounts (Checking and Savings).
+* Make deposits and withdrawals.
+* The user's information was saved to a file after each transaction( Date, Time, Ammount, Account, and New Balance).
+ 
 
 ### Code Louisville Project Requirements
 
