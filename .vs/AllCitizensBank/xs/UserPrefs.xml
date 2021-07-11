@@ -1,15 +1,18 @@
-﻿<Properties StartupConfiguration="{9C674C6A-1B6C-4FF3-B3E3-8D7C7A91E1E9}|Default">
+﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{9C674C6A-1B6C-4FF3-B3E3-8D7C7A91E1E9}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="Program.cs">
     <Files>
-      <File FileName="Program.cs" Line="1" Column="1" />
-      <File FileName="README.md" Line="1" Column="1" />
+      <File FileName="Program.cs" Line="73" Column="36" />
+      <File FileName="README.md" Line="7" Column="85" />
+      <File FileName="Transaction.cs" Line="14" Column="30" />
+      <File FileName="BankData.cs" Line="9" Column="75" />
+      <File FileName="Users.cs" Line="35" Column="2" />
+      <File FileName="BaseAccount.cs" Line="65" Column="33" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="AllCitizensBank" expanded="True">
             <Node name="AllCitizensBank" expanded="True">
-              <Node name="Dependencies" expanded="True" />
               <Node name="Program.cs" selected="True" />
             </Node>
           </Node>
@@ -18,7 +21,7 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.AllCitizensBank FirstBuild="True" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.ItemProperties.AllCitizensBank PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

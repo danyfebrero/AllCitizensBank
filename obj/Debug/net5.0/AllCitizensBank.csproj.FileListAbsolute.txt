@@ -1,0 +1,15 @@
+/Users/danito/Projects/AllCitizensBank/bin/Debug/net5.0/AllCitizensBank.deps.json
+/Users/danito/Projects/AllCitizensBank/bin/Debug/net5.0/AllCitizensBank.runtimeconfig.json
+/Users/danito/Projects/AllCitizensBank/bin/Debug/net5.0/AllCitizensBank.runtimeconfig.dev.json
+/Users/danito/Projects/AllCitizensBank/bin/Debug/net5.0/AllCitizensBank.dll
+/Users/danito/Projects/AllCitizensBank/bin/Debug/net5.0/ref/AllCitizensBank.dll
+/Users/danito/Projects/AllCitizensBank/bin/Debug/net5.0/AllCitizensBank.pdb
+/Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/AllCitizensBank.csproj.AssemblyReference.cache
+/Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/AllCitizensBank.GeneratedMSBuildEditorConfig.editorconfig
+/Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/AllCitizensBank.AssemblyInfoInputs.cache
+/Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/AllCitizensBank.AssemblyInfo.cs
+/Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/AllCitizensBank.csproj.CoreCompileInputs.cache
+/Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/AllCitizensBank.dll
+/Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/ref/AllCitizensBank.dll
+/Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/AllCitizensBank.pdb
+/Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/AllCitizensBank.genruntimeconfig.cache
