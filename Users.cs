@@ -13,13 +13,19 @@ namespace AllCitizensBank
         private List<Account> Accounts = new();
 
 
-        public Users()
+        public Users(string user, string password, string firstName, string lastName, short pin, Account newAccount)
         {
+            User = user;
+            Password = password;
+            FirstName = firstName;
+            LastName = lastName;
+            Pin = pin;
+            AddAccount(newAccount);
         }
 
         public bool UserNameAvaliable(string newUser)
         {
-            //check if the user already exist
+            //check if the user already exist and give the option to cancel
             return true;
         }
         public void ChangeUserName(string newUserName)
@@ -30,17 +36,34 @@ namespace AllCitizensBank
         {
             Password = newPassword;
         }
-        public void CheckUserName(string newUserName)
-        {
-            //while the user name is not avaliable ask for a new user name and give the option to cancel
-        }
-        public void CheckPassword(string newPassword)
+        public bool PasswordIsSecure(string newPassword)
         {
             //while the password doesnt have the requirement ask for a new password and give the option to cancel
+            return (newPassword.Length > 3);
         }
         public void ChangePin(short newPin)
         {
             Pin = newPin;
+        }
+        public bool PinIsSecure(short pin)
+        {
+            return pin.ToString().Length == 4;
+        }
+        public void ChangeFirstName(string newFirstName)
+        {
+            FirstName = newFirstName;
+        }
+        public void ChangeLastName(string newLastName)
+        {
+            LastName = newLastName;
+        }
+        public void AddAccount(Account newAccount)
+        {
+            Accounts.Add(newAccount);
+        }
+        public void DeleteAccount(Account account)
+        {
+            Accounts.Remove(account);
         }
     }
 }

@@ -5,10 +5,10 @@ namespace AllCitizensBank
 {
     public class Account
     {
-        public string AccountNumber { get; }
-        public string AccountType { get; }
-        public string User { get; }
-        public decimal Balance { get
+        private string AccountNumber { get; }
+        private string AccountType { get; }
+        private string User { get; }
+        private decimal Balance { get
             {
                 decimal balance = 0;
                 foreach (var transaction in allTransactions)
@@ -41,11 +41,6 @@ namespace AllCitizensBank
             allTransactions.Add(deposit);
         }
 
-        private bool isNumeric(decimal amount)
-        {
-            throw new NotImplementedException();
-        }
-
         public void MakeWithdrawal(decimal amount, DateTime date, string note)
         {
             // check if the withdraw is less than the current balance
@@ -68,8 +63,7 @@ namespace AllCitizensBank
 
         public bool IsDecimal(string value)
         {
-            var isDecimal = decimal.TryParse(value, out decimal n);
-            return isDecimal;
+            return decimal.TryParse(value, out decimal n);
         }
         
     }

@@ -35,33 +35,21 @@ namespace AllCitizensBank
             if (optionTyped == 2)
             {
                 //open a new account
-                //ask for full name, 
+                //ask for full name, user(check avaliability), password, and pin(for recover password and user)
+                //ask for type of account to open and show options to decide
+                //then auto-login
             }
             if (optionTyped == 3)
             {
                 //recover user or password
+                //ask for full name and pin to give the option of make a new user and password
+                //auto login
             }
             if (optionTyped == 4)
             {
                 Console.WriteLine("Good bye");
                 System.Environment.Exit(1);
             }
-
-
-            //show accounts under user, go back to login or quit
-
-
-
-            //actions for the selected account
-            //  deposit
-            //  withdraw
-            //  balance
-            //  transfer
-            //  open new account
-            //  transactiion history
-            //  select another account
-            //  quit
-
 
         }
 
