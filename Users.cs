@@ -23,9 +23,16 @@ namespace AllCitizensBank
             AddAccount(newAccount);
         }
 
+        public void SaveUserToFile(Users userToSave)
+        {
+            //if the file doesnt exist create the file
+            //else add the file to the user list
+            //and save the user list to the json file
+        }
+
         public bool UserNameAvaliable(string newUser)
         {
-            //check if the user already exist and give the option to cancel
+            //check if the user exist in the list loaded from the jason file and give the option to cancel
             return true;
         }
         public void ChangeUserName(string newUserName)

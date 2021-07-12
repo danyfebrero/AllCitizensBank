@@ -9,11 +9,15 @@ namespace AllCitizensBank
             //welcome
             Console.Clear();
             Console.WriteLine("Welcome to All Citizens Bank");
-            
+
+            //load the json files
+            //load user.json
+            //load bankdata
+            //load accounts
+            //
+
             int optionTyped = 0;
-
             promptOptions();
-
             while (!(int.TryParse(Console.ReadLine(), out optionTyped)) || optionTyped < 1 || optionTyped > 4)
             {
                 Console.WriteLine("");

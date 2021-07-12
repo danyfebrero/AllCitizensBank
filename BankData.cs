@@ -6,7 +6,7 @@ namespace AllCitizensBank
     public class BankData
     {
         private static int BankAccountSeed { get; set; }
-        public List<string> AccountTypes = new() {"Checking", "Savings"}; 
+        public List<string> AccountTypes = new() {"Checking", "Savings"}; //load the types from the stream
 
         public int GetNewAccountNumber()
         {
