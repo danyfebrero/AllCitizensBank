@@ -7,61 +7,55 @@ namespace AllCitizensBank
 {
     public class BankData
     {
-        private static int BankAccountSeed { get; set; }
-        public List<string> AccountTypes = new() {"Checking", "Savings"}; //load the types from the stream
+        public static int BankAccountSeed { get; set; }
 
-        public int GetNewAccountNumber()
-        {
-            return BankAccountSeed;
-        }
         public void MakeNewSeed()
         {
             BankAccountSeed++;
         }
-        public static List<User> LoadBankDataFromFile()
+        public static void LoadBankDataFromFile()
         {
 
-            var file = new FileInfo(UserFileName());
-            List<User> ListOfUsers = new();
+            var file = new FileInfo(BankDataFileName());
+            int bankAccountSeed = 1000000000; ;
             try
             {
+                
                 //checks if users.json exist and creates it if not
                 if (!file.Exists)
                 {
-                    User AdminUser = new("Admin", "1234", "Administrator", null, 1111);
-                    ListOfUsers.Add(AdminUser);
-                    SerializeBankDataToFile(ListOfUsers);
+                    SerializeBankDataToFile(bankAccountSeed);
                 }
-                ListOfUsers = DeserializeBankData();
+                bankAccountSeed = DeserializeBankData();
             }
             catch (Exception ex)
             {
                 Console.WriteLine("ERROR: " + ex);
             }
-            return ListOfUsers;
+            BankAccountSeed = bankAccountSeed;
         }
 
-        public static void SerializeBankDataToFile(List<User> listOfUsers)
+        public static void SerializeBankDataToFile(int bankAccountSeed)
         {
             var serializer = new JsonSerializer();
-            using (var writer = new StreamWriter(UserFileName()))
+            using (var writer = new StreamWriter(BankDataFileName()))
             using (var jsonWriter = new JsonTextWriter(writer))
             {
-                serializer.Serialize(jsonWriter, listOfUsers);
+                serializer.Serialize(jsonWriter, bankAccountSeed);
             }
         }
-        public static List<User> DeserializeBankData()
+        public static int DeserializeBankData()
         {
-            var users = new List<User>();
+            int bankAccountSeed;
             var serializer = new JsonSerializer();
-            using (var reader = new StreamReader(UserFileName()))
+            using (var reader = new StreamReader(BankDataFileName()))
             using (var jasonReader = new JsonTextReader(reader))
             {
-                users = serializer.Deserialize<List<User>>(jasonReader);
+                bankAccountSeed = serializer.Deserialize<int>(jasonReader);
             }
-            return users;
+            return bankAccountSeed;
         }
-        public static string UserFileName()
+        public static string BankDataFileName()
         {
             string currentDirectory = Directory.GetCurrentDirectory();
             DirectoryInfo directory = new DirectoryInfo(currentDirectory);
