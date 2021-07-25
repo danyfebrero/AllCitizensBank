@@ -15,5 +15,3 @@
 /Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/AllCitizensBank.genruntimeconfig.cache
 /Users/danito/Projects/AllCitizensBank/bin/Debug/net5.0/Newtonsoft.Json.dll
 /Users/danito/Projects/AllCitizensBank/obj/Debug/net5.0/AllCitizensBank.csproj.CopyComplete
-/Users/danito/Projects/AllCitizensBank/bin/Debug/net5.0/accounts.json
-/Users/danito/Projects/AllCitizensBank/bin/Debug/net5.0/bankdata.json

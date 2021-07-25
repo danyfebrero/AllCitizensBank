@@ -9,7 +9,7 @@ namespace AllCitizensBank
     {
         public static int BankAccountSeed { get; set; }
 
-        public void MakeNewSeed()
+        public static void MakeNewSeed()
         {
             BankAccountSeed++;
         }
@@ -17,31 +17,29 @@ namespace AllCitizensBank
         {
 
             var file = new FileInfo(BankDataFileName());
-            int bankAccountSeed = 1000000000; ;
             try
             {
-                
                 //checks if users.json exist and creates it if not
                 if (!file.Exists)
                 {
-                    SerializeBankDataToFile(bankAccountSeed);
+                    BankAccountSeed = 1000000000;
+                    SaveBankDataToFile();
                 }
-                bankAccountSeed = DeserializeBankData();
+                BankAccountSeed = DeserializeBankData();
             }
             catch (Exception ex)
             {
                 Console.WriteLine("ERROR: " + ex);
             }
-            BankAccountSeed = bankAccountSeed;
         }
 
-        public static void SerializeBankDataToFile(int bankAccountSeed)
+        public static void SaveBankDataToFile()
         {
             var serializer = new JsonSerializer();
             using (var writer = new StreamWriter(BankDataFileName()))
             using (var jsonWriter = new JsonTextWriter(writer))
             {
-                serializer.Serialize(jsonWriter, bankAccountSeed);
+                serializer.Serialize(jsonWriter, BankAccountSeed);
             }
         }
         public static int DeserializeBankData()

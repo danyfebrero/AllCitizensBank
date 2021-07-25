@@ -5,10 +5,10 @@ namespace AllCitizensBank
 {
     public class Account
     {
-        private string AccountNumber { get; }
-        private string AccountType { get; }
-        private string User { get; }
-        private decimal Balance { get
+        public int AccountNumber { get; }
+        public string AccountType { get; }
+        public List<Transaction> allTransactions = new();
+        public decimal Balance { get
             {
                 decimal balance = 0;
                 foreach (var transaction in allTransactions)
@@ -18,15 +18,22 @@ namespace AllCitizensBank
                 return balance;
             }
         }
-        private List<Transaction> allTransactions = new();
+        
 
-        public Account( string accountType, string name, string lastName)
+        public Account(int acccountNumber, string accountType, decimal initialDeposit)
         {
-            //AccountNumber = MakeNewAccountNumber();
+            AccountNumber = acccountNumber;
             AccountType = accountType;
-            //User = GetNewUser();
+
+            List<Transaction> transactions = null;
+            if (initialDeposit != 0)
+            {
+                var firstDeposit = new Transaction(initialDeposit, DateTime.Now, "Initial Deposit");
+                transactions.Add(firstDeposit);
+            }
             
-            //Transactions = loadfromstream;
+            allTransactions = transactions;
+            
         }
 
         public void MakeDeposit(decimal amount, DateTime date, string note)
@@ -65,6 +72,6 @@ namespace AllCitizensBank
         {
             return decimal.TryParse(value, out decimal n);
         }
-        
+
     }
 }

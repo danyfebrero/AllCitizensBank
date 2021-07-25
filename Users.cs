@@ -12,31 +12,24 @@ namespace AllCitizensBank
         public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public short Pin { get; set; }
+        public string Pin { get; set; }
         public List<Account> Accounts = new();
 
 
-        public User(string user, string password, string firstName, string lastName, short pin)
+        public User(string user, string password, string firstName, string lastName, string pin, List<Account> account)
         {
             UserId = user;
             Password = password;
             FirstName = firstName;
             LastName = lastName;
             Pin = pin;
+            Accounts = account;
         }
 
-        public bool UserNameAvaliable(List<User> users, string newUserId)
+        public static bool UserNameAvaliable(List<User> users, string newUserId)
         {
             //check if the user exist in the list loaded from the json file and give the option to cancel
-            var counter = 0;
-            foreach (var user in users)
-            {
-                if (user.UserId == newUserId)
-                {
-                    counter++;
-                }
-            }
-            return counter == 0 ;
+            return users.Any(user => user.UserId == newUserId);
         }
         public void ChangeUserName(string newUserName)
         {
@@ -46,18 +39,9 @@ namespace AllCitizensBank
         {
             Password = newPassword;
         }
-        public bool PasswordIsSecure(string newPassword)
-        {
-            //while the password doesnt have the requirement ask for a new password and give the option to cancel
-            return (newPassword.Length > 3);
-        }
-        public void ChangePin(short newPin)
+        public void ChangePin(string newPin)
         {
             Pin = newPin;
-        }
-        public bool PinIsSecure(short pin)
-        {
-            return pin.ToString().Length == 4;
         }
         public void ChangeFirstName(string newFirstName)
         {
@@ -86,9 +70,9 @@ namespace AllCitizensBank
                 //checks if users.json exist and creates it if not
                 if (!file.Exists)
                 {
-                    User AdminUser = new("Admin","1234","Administrator",null,1111);
+                    var AdminUser = new User("admin","1234","Administrator",null,"1111",null);
                     ListOfUsers.Add(AdminUser);
-                    SerializeUserToFile(ListOfUsers);
+                    SaveUsersToFile(ListOfUsers);
                 }
                 ListOfUsers = DeserializeUsers();
             }
@@ -99,7 +83,7 @@ namespace AllCitizensBank
             return ListOfUsers;
         }
 
-        public static void SerializeUserToFile(List<User> listOfUsers)
+        public static void SaveUsersToFile(List<User> listOfUsers)
         {
             var serializer = new JsonSerializer();
             using (var writer = new StreamWriter(UserFileName()))
