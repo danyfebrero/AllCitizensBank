@@ -84,7 +84,7 @@ namespace AllCitizensBank
             {
                 ShowBankLogo("Login");
                 Console.Write("User ID: ");
-                _userId = Console.ReadLine();
+                _userId = Console.ReadLine().ToLower();
                 Console.Write("Password: ");
                 _password = Console.ReadLine();
 
@@ -120,13 +120,50 @@ namespace AllCitizensBank
         private static void AccountSelector(string userID)
         {
             // todo user a linq to show the accounts owned by this user, if not show this user doesnt have accounts
-            if()
+            Console.Clear();
+            ShowBankLogo($"Accounts");
+            if (ListOfUsers[ActiveUserIndex].Accounts == null)
             {
-
+                Console.WriteLine("You haven't opened an account yet.");
+                string makeNewAccount;
+                do
+                {
+                    Console.Write("Do you want to open a new account now?: ");
+                    makeNewAccount = Console.ReadLine().ToLower();
+                    switch (makeNewAccount[0])
+                    {
+                        case 'y':
+                            AddNewAccount();
+                            break;
+                        case 'n':
+                            //press any key to go back to main menu
+                            break;
+                        case 'q':
+                            System.Environment.Exit(0);
+                            break;
+                        default:
+                            Console.WriteLine("Please enter yes, no, or quit.");
+                            break;
+                    }
+                }
+                while ( makeNewAccount[0] != 'y' || makeNewAccount[0] != 'n');
             }
-            // give the option to select an account to work with
-            
-            
+            else
+            {
+                foreach (var account in ListOfUsers[ActiveUserIndex].Accounts)
+                {
+                    int i = 0;
+                    Console.WriteLine("______________________________");
+                    Console.WriteLine($"Account {account}:")
+                    Console.WriteLine($"{account.AccountType}: {account.AccountNumber}\t\t{account.Balance}");
+                    Console.WriteLine($"As of: {DateTime.Now}\t\tAvailable Balance");
+
+                }
+                // give the option to select an account to work with
+            }
+
+
+
         }
         private static void AccountMenu()
         {
@@ -204,7 +241,7 @@ namespace AllCitizensBank
                 lastName = Console.ReadLine();
 
             }
-            while (userId.Length < 4 || User.UserNameAvaliable(ListOfUsers,userId)|| userId.Contains(" "))
+            while (userId.Length < 4 || User.UserNameAvaliable(ListOfUsers,userId) || userId.Contains(" "))
             {
                 // mostrar mnaje de usuario invaldo y volver a preguntar
                 Console.WriteLine("Invalid or Unavailable User Id.");
@@ -271,12 +308,106 @@ namespace AllCitizensBank
         public static void RecoverPassOrId()
         {
             //todo to recover user or password
-            Console.WriteLine("");
-            Console.WriteLine("1: Recover your password");
-            Console.WriteLine("2: Recover your User ID");
-            Console.WriteLine("3: Back to main menu");
-            Console.WriteLine("");
-            Console.Write("Type your option: ");
+            string option;
+            string firstName, lastName, pin, userId, newPassword, repeatedPassword;
+            int intent = 0;
+            do
+            {
+                Console.WriteLine("");
+                Console.WriteLine("1: Recover your password");
+                Console.WriteLine("2: Recover your User ID");
+                Console.WriteLine("3: Back to main menu");
+                Console.WriteLine("");
+                Console.Write("Type your option: ");
+                option = Console.ReadLine();
+                Console.Clear();
+                Console.WriteLine("Please introduce your first name: ");
+                firstName = Console.ReadLine().ToLower();
+                Console.WriteLine("Please introduce your last name: ");
+                lastName = Console.ReadLine().ToLower();
+
+                switch (option)
+                {
+                    case "1":
+                        int passRecoveryCounter = 0;
+                        do
+                        {
+                            Console.WriteLine("Please introduce your User ID: ");
+                            userId = Console.ReadLine().ToLower();
+                            if (User.UserNameAvaliable(ListOfUsers, userId) == false) //the user id exist
+                            {
+                                var indexOfUser = ListOfUsers.FindIndex(u => u.UserId == userId);
+                                if (userId == ListOfUsers[indexOfUser].UserId
+                                    && firstName == ListOfUsers[indexOfUser].FirstName
+                                    && lastName == ListOfUsers[indexOfUser].LastName)
+                                {
+                                    do
+                                    {
+                                        Console.WriteLine("Type your new password: ");
+                                        newPassword = Console.ReadLine();
+                                        Console.WriteLine("Retype your new password: ");
+                                        repeatedPassword = Console.ReadLine();
+
+                                        if (repeatedPassword == newPassword)
+                                        {
+                                            ListOfUsers[indexOfUser].Password = newPassword;
+                                            User.SaveUsersToFile(ListOfUsers);
+                                        }
+                                        else
+                                        {
+                                            intent++;
+                                            Console.WriteLine("The passwords don't match");
+                                            Console.ReadKey();
+                                            if (intent == 3)
+                                                passRecoveryCounter = 3;
+                                        }
+                                    }
+                                    while (newPassword != repeatedPassword || intent == 3);
+                                }
+                                else
+                                {
+                                    passRecoveryCounter++;
+                                    Console.WriteLine("The first and/or last name are incorrect");
+                                    Console.ReadKey();
+                                }
+
+                            }
+                            else
+                            {
+                                passRecoveryCounter++;
+                                Console.WriteLine($"The {userId} user ID does't exist. Press any key to try again.");
+                                Console.ReadKey();
+                            }
+
+                        }
+                        while (User.UserNameAvaliable(ListOfUsers, userId) == true || passRecoveryCounter < 3);
+                        break;
+                    case "2":
+                        int userRecoveryCounter = 0;
+                        if ( true )
+                        { }
+                        else
+                        { }
+
+                        do
+                        {
+                            Console.WriteLine("Please introduce your Pin: ");
+                            pin = Console.ReadLine().ToLower();
+                        }
+                        while ( true || userRecoveryCounter < 3);
+                        
+                        break;
+                    case "3":
+                        break;
+                    default:
+                        Console.Clear();
+                        Console.WriteLine("Please enter 1, 2, or 3 next time. Press any key to return to the menu");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+            while (option != "1" || option != "2" || option != "3");
+            
 
             //ask for full name and pin to give the option of make a new user and password
             //auto login
