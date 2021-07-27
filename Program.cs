@@ -46,7 +46,6 @@ namespace AllCitizensBank
             {
                 case "1":
                     LoginMenu();
-                    Console.WriteLine(ActiveUser);
                     if (ActiveUser != null)
                         AccountSelector();
                     break;
@@ -82,7 +81,7 @@ namespace AllCitizensBank
                 _password = Console.ReadLine();
 
                 // check if the user id exist on list
-                if ( User.UserNameAvaliable( ListOfUsers, _userId )) //if the user exist on the list
+                if ( User.UserNameOnList( ListOfUsers, _userId )) //if the user exist on the list
                 {
                     //select the user
                     var userIndex = ListOfUsers.FindIndex( u => u.UserId == _userId );
@@ -136,6 +135,7 @@ namespace AllCitizensBank
             {
                 Console.WriteLine("You haven't opened an account yet.");
                 string makeNewAccount;
+                bool endLoop = false;
                 do
                 {
                     Console.Write("Do you want to open a new account now?: ");
@@ -144,8 +144,14 @@ namespace AllCitizensBank
                     {
                         case 'y':
                             AddNewAccount();
+                            endLoop = true;
                             break;
                         case 'n':
+                            Console.WriteLine("This user doesn't have accounts, goin back to main menu.");
+                            ActiveUser = null;
+                            Console.ReadKey();
+
+                            endLoop = true;
                             //press any key to go back to main menu
                             break;
                         case 'q':
@@ -156,7 +162,8 @@ namespace AllCitizensBank
                             break;
                     }
                 }
-                while ( makeNewAccount[0] != 'y' || makeNewAccount[0] != 'n');
+                while ( endLoop == false );
+                
             }
             else
             {
@@ -184,7 +191,7 @@ namespace AllCitizensBank
 
                     }
                 }
-                while (!int.TryParse(selectedAccountIndex, out int temp) || temp < 0 || temp > ListOfUsers[ActiveUserIndex].Accounts.Count - 1);
+                while ((!int.TryParse(selectedAccountIndex, out int temp)) && ( temp < 0 || temp > ListOfUsers[ActiveUserIndex].Accounts.Count - 1));
 
                 
             }
@@ -224,7 +231,7 @@ namespace AllCitizensBank
             Console.Write("\nOption: ");
 
         }
-        public static void NewUser()
+        public static void NewUser()   
         {
             string name, lastName, userId, pass, repeatPass, pin, repeatPin;
 
@@ -235,14 +242,13 @@ namespace AllCitizensBank
             Console.Write("First Name: ");
             name = Console.ReadLine();
            
-
             Console.Write("Last Name: ");
             lastName = Console.ReadLine();
 
-            Console.Write("User ID (more than 4 characters with no blankspaces): ");
+            Console.Write("User ID (must have 4 characters with no blankspaces): ");
             userId = Console.ReadLine().ToLower();
 
-            Console.Write("Password (more than 4 characters): ");
+            Console.Write("Password (must have more than 4 characters): ");
             pass = Console.ReadLine();
             Console.Write("Repeat Password: ");
             repeatPass = Console.ReadLine();
@@ -252,25 +258,25 @@ namespace AllCitizensBank
             Console.Write("Pin: ");
             repeatPin = Console.ReadLine();
 
-            while (name.Any(char.IsDigit))
+            while (name.Any(char.IsDigit) || String.IsNullOrEmpty(name))
             {
-                //mostrar mensaje de nombre invaldo y volver a preguntar
+                
                 Console.WriteLine("Invalid First Name.");
                 Console.Write("First Name: ");
                 name = Console.ReadLine();
                 
             }
-            while (lastName.Any(char.IsDigit))
+            while (lastName.Any(char.IsDigit) || String.IsNullOrEmpty(name))
             {
-                //mostrar mensaje de apellido invaldo y volver a preguntar
+               
                 Console.WriteLine("Invalid Last Name.");
                 Console.Write("Last Name: ");
                 lastName = Console.ReadLine();
 
             }
-            while (userId.Length < 4 || User.UserNameAvaliable(ListOfUsers,userId) || userId.Contains(" "))
+            while (userId.Length < 4 || User.UserNameOnList(ListOfUsers,userId) || userId.Contains(" ") || String.IsNullOrEmpty(name))
             {
-                // mostrar mnaje de usuario invaldo y volver a preguntar
+                
                 Console.WriteLine("Invalid or Unavailable User Id.");
                 Console.Write("User ID (more than 4 characters with no blankspaces): ");
                 userId = Console.ReadLine();
@@ -283,7 +289,7 @@ namespace AllCitizensBank
                 Console.Write("Repeat Password: ");
                 repeatPass = Console.ReadLine();
             }
-            while (pin.Length != 4 || pin != repeatPin)
+            while (pin.Length != 4 || pin != repeatPin || !pin.All(char.IsDigit))
             {
                 Console.Write("Pin(must have 4 digits): ");
                 pin = Console.ReadLine();
@@ -300,26 +306,27 @@ namespace AllCitizensBank
 
         public static void AddNewAccount()
         {
-            var LoopEnd = false;
+            string userResponse;
+            var endLoop = false;
             do
             {
                 Console.WriteLine("What type of account do you want to open:");
                 Console.WriteLine("1: Cheking");
                 Console.WriteLine("2: Saving");
-                Console.WriteLine("3: Back to Main Menu");
+                Console.WriteLine("3: Go Back");
                 Console.WriteLine("Please select an option:\n");
-                string userResponse = Console.ReadLine();
-                if (userResponse == "1" || userResponse == "2" || userResponse == "3")
-                    LoopEnd = true;
+                userResponse = Console.ReadLine();
                 switch (userResponse)
                 {
                     case "1": //checking account
                         NewAccount("Checking");
+
                         break;
                     case "2": //saving acccount
                         NewAccount("Savings");
                         break;
                     case "3": // no account
+                        AccountSelector();
                         break;
 
                     default:
@@ -328,8 +335,10 @@ namespace AllCitizensBank
                         Console.ReadKey();
                         break;
                 }
+                if (userResponse == "1" || userResponse == "2" || userResponse == "3")
+                    endLoop = true;
             }
-            while (LoopEnd == false);
+            while (endLoop == false);
         }
 
         public static void RecoverPassOrId()
@@ -338,8 +347,11 @@ namespace AllCitizensBank
             string option;
             string firstName, lastName, pin, userId, newPassword, repeatedPassword;
             int intent = 0;
+            var endLoop = false;
             do
             {
+                Console.Clear();
+                ShowBankLogo("Recovery Menu");
                 Console.WriteLine("");
                 Console.WriteLine("1: Recover your password");
                 Console.WriteLine("2: Recover your User ID");
@@ -348,10 +360,29 @@ namespace AllCitizensBank
                 Console.Write("Type your option: ");
                 option = Console.ReadLine();
                 Console.Clear();
+                if (option == "3")
+                    break;
+                if (option != "1" && option != "2")
+                    {
+                        Console.WriteLine("Invalid option, please try again");
+                        Console.ReadKey();
+                        continue;
+                    }
+                    
                 Console.WriteLine("Please introduce your first name: ");
                 firstName = Console.ReadLine().ToLower();
                 Console.WriteLine("Please introduce your last name: ");
                 lastName = Console.ReadLine().ToLower();
+                // check if there is some users with that name and last name
+                var filteredUsers = ListOfUsers.Where(u => u.FirstName == firstName).Where(u => u.LastName == lastName);
+                if (filteredUsers.Count() == 0)
+                {
+                    Console.WriteLine($"There is no user vinculated to {firstName} {lastName}");
+                    Console.WriteLine($"Press any key to go back to main menu");
+                    Console.ReadKey();
+                    break;
+                }
+                // else continue 
 
                 switch (option)
                 {
@@ -361,7 +392,7 @@ namespace AllCitizensBank
                         {
                             Console.WriteLine("Please introduce your User ID: ");
                             userId = Console.ReadLine().ToLower();
-                            if (User.UserNameAvaliable(ListOfUsers, userId) == false) //the user id exist
+                            if (User.UserNameOnList(ListOfUsers, userId)) //the user exist
                             {
                                 var indexOfUser = ListOfUsers.FindIndex(u => u.UserId == userId);
                                 if (userId == ListOfUsers[indexOfUser].UserId
@@ -379,50 +410,66 @@ namespace AllCitizensBank
                                         {
                                             ListOfUsers[indexOfUser].Password = newPassword;
                                             User.SaveUsersToFile(ListOfUsers);
+                                            passRecoveryCounter = 3;
                                         }
                                         else
                                         {
                                             intent++;
-                                            Console.WriteLine("The passwords don't match");
+                                            Console.WriteLine("The passwords do not match");
                                             Console.ReadKey();
                                             if (intent == 3)
                                                 passRecoveryCounter = 3;
                                         }
                                     }
-                                    while (newPassword != repeatedPassword || intent == 3);
+                                    while (newPassword != repeatedPassword || intent < 3);
                                 }
                                 else
                                 {
-                                    passRecoveryCounter++;
-                                    Console.WriteLine("The first and/or last name are incorrect");
+                                    Console.WriteLine("The first and/or the last name are incorrect");
                                     Console.ReadKey();
                                 }
 
                             }
                             else
                             {
-                                passRecoveryCounter++;
                                 Console.WriteLine($"The {userId} user ID does't exist. Press any key to try again.");
                                 Console.ReadKey();
                             }
-
+                            passRecoveryCounter++;
                         }
-                        while (User.UserNameAvaliable(ListOfUsers, userId) == true || passRecoveryCounter < 3);
+                        while ( passRecoveryCounter < 3);
+                        endLoop = true;
                         break;
-                    case "2":
-                        int userRecoveryCounter = 0;
-                        if ( true )
-                        { }
-                        else
-                        { }
-
+                    case "2": 
+                        var userRecoveryCounter = 0;
                         do
                         {
                             Console.WriteLine("Please introduce your Pin: ");
                             pin = Console.ReadLine().ToLower();
+                            
+                            // if one user have same name, last name, and pin
+                            // give the user id to the user
+                            var result = ListOfUsers.Where(u => u.FirstName == firstName).Where(u => u.LastName == lastName).Where(u => u.Pin == pin);
+                            if (result.Count() == 0)
+                            {
+                                Console.WriteLine($"Invalid pin, please try again. Attempt {userRecoveryCounter}");
+                                Console.ReadKey();
+                                Console.Clear();
+                            }
+                            else
+                            {
+                                foreach (var item in result)
+                                {
+                                    Console.WriteLine($"Your User ID is: {item.UserId}");
+                                    Console.ReadKey();
+                                    userRecoveryCounter = 3;
+                                }
+                            }
+                                
+                            userRecoveryCounter++;
                         }
-                        while ( true || userRecoveryCounter < 3);
-                        
+                        while((pin.Length != 4 && !pin.All(char.IsDigit)) || userRecoveryCounter < 3);
+                        endLoop = true;
                         break;
                     case "3":
                         break;
@@ -432,8 +479,10 @@ namespace AllCitizensBank
                         Console.ReadKey();
                         break;
                 }
+                if (option == "1" || option == "2")
+                    endLoop = true;
             }
-            while (option != "1" || option != "2" || option != "3");
+            while (endLoop == false);
             
 
             
@@ -473,6 +522,7 @@ namespace AllCitizensBank
                 ListOfUsers[ActiveUserIndex].Accounts.Add(newAccount);
                 User.SaveUsersToFile(ListOfUsers);
                 Console.WriteLine($"{ListOfUsers[ActiveUserIndex].FirstName} {ListOfUsers[ActiveUserIndex].LastName} added a new {newAccount.AccountType} account with a initial deposit of {newAccount.Balance}");
+                
             }
             while ((answer[0].ToString().ToLower() != "y") || (answer[0].ToString().ToLower() != "n"));
         }
