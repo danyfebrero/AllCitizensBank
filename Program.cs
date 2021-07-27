@@ -25,7 +25,6 @@ namespace AllCitizensBank
             // load bankdata
             BankData.LoadBankDataFromFile();
 
-
             //welcome and main menu
             do
                 MainMenu();
@@ -47,18 +46,13 @@ namespace AllCitizensBank
             {
                 case "1":
                     LoginMenu();
-
-                    //Console.WriteLine(ActiveUser.UserId);
-                    //Console.ReadKey();
-                    //Environment.Exit(0);
+                    Console.WriteLine(ActiveUser);
+                    if (ActiveUser != null)
+                        AccountSelector();
                     break;
                 case "2":
                     NewUser();
                     AddNewAccount();
-
-                    //Console.WriteLine(ActiveUser.UserId);
-                    //Console.ReadKey();
-                    //Environment.Exit(0);
                     break;
                 case "3":
                     RecoverPassOrId();
@@ -79,7 +73,6 @@ namespace AllCitizensBank
         {
             var counter = 0;
             string _userId, _password;
-            string selectedUser ;
             do
             {
                 ShowBankLogo("Login");
@@ -89,35 +82,52 @@ namespace AllCitizensBank
                 _password = Console.ReadLine();
 
                 // check if the user id exist on list
-                if (User.UserNameAvaliable(ListOfUsers, _userId))
+                if ( User.UserNameAvaliable( ListOfUsers, _userId )) //if the user exist on the list
                 {
                     //select the user
-                    selectedUser = ListOfUsers.Single(u => u.UserId == _userId).UserId;
+                    var userIndex = ListOfUsers.FindIndex( u => u.UserId == _userId );
                     //check the pasword
-                    if (_password == ListOfUsers[ActiveUserIndex].Password)
+                    if ( ListOfUsers[userIndex].Password ==  _password )
                     {
                         counter = 3;
-                        ActiveUser = selectedUser;
+                        ActiveUser = _userId;
                         continue;
+                    }
+                    else
+                    {
+                        if (counter < 2)
+                        {
+                            Console.WriteLine("Password incorrect. Press any key to return to try again");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            ActiveUser = null;
+                            Console.WriteLine("Password incorrect. Press any key to return to main menu");
+                            Console.ReadKey();
+                        }
                     }
 
                 }
-                if (counter < 2)
-                {
-                    Console.WriteLine("User ID or password incorrect. Press any key to return to try again");
-                    Console.ReadKey();
-                }
                 else
                 {
-                    selectedUser = null;
-                    Console.WriteLine("User ID or password incorrect. Press any key to return to main menu");
-                    Console.ReadKey();
+                    if (counter < 2)
+                    {
+                        Console.WriteLine("User ID incorrect. Press any key to return to try again");
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        ActiveUser = null;
+                        Console.WriteLine("User ID incorrect. Press any key to return to main menu");
+                        Console.ReadKey();
+                    }
                 }
                 counter++;
             }
             while (counter < 3);
         }
-        private static void AccountSelector(string userID)
+        private static void AccountSelector()
         {
             // todo user a linq to show the accounts owned by this user, if not show this user doesnt have accounts
             Console.Clear();
@@ -150,16 +160,33 @@ namespace AllCitizensBank
             }
             else
             {
+                string selectedAccountIndex;
+                int i = 0;
                 foreach (var account in ListOfUsers[ActiveUserIndex].Accounts)
                 {
-                    int i = 0;
+                    
                     Console.WriteLine("______________________________");
-                    Console.WriteLine($"Account {account}:")
+                    Console.WriteLine($"Account {account}: {i}");
                     Console.WriteLine($"{account.AccountType}: {account.AccountNumber}\t\t{account.Balance}");
                     Console.WriteLine($"As of: {DateTime.Now}\t\tAvailable Balance");
+                    i++;
 
                 }
                 // give the option to select an account to work with
+                do
+                {
+                    Console.Write("Select an Account or type quit to exit: ");
+                    selectedAccountIndex = Console.ReadLine().ToLower();
+                    if (selectedAccountIndex[0] == 'q')
+                        System.Environment.Exit(0);
+                    else
+                    {
+
+                    }
+                }
+                while (!int.TryParse(selectedAccountIndex, out int temp) || temp < 0 || temp > ListOfUsers[ActiveUserIndex].Accounts.Count - 1);
+
+                
             }
 
 
@@ -409,7 +436,7 @@ namespace AllCitizensBank
             while (option != "1" || option != "2" || option != "3");
             
 
-            //ask for full name and pin to give the option of make a new user and password
+            
             //auto login
 
         }

@@ -29,27 +29,7 @@ namespace AllCitizensBank
         public static bool UserNameAvaliable(List<User> users, string newUserId)
         {
             //check if the user exist in the list loaded from the json file and give the option to cancel
-            return users.Any(user => user.UserId.ToLower() == newUserId);
-        }
-        public void ChangeUserName(string newUserName)
-        {
-            UserId = newUserName;
-        }
-        public void ChangePassword(string newPassword)
-        {
-            Password = newPassword;
-        }
-        public void ChangePin(string newPin)
-        {
-            Pin = newPin;
-        }
-        public void ChangeFirstName(string newFirstName)
-        {
-            FirstName = newFirstName;
-        }
-        public void ChangeLastName(string newLastName)
-        {
-            LastName = newLastName;
+            return users.Any(user => user.UserId.ToLower() == newUserId.ToLower());
         }
         public void AddAccount(Account newAccount)
         {
