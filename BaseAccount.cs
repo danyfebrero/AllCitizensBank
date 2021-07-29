@@ -20,20 +20,10 @@ namespace AllCitizensBank
         }
         
 
-        public Account(int acccountNumber, string accountType, decimal initialDeposit)
+        public Account(int acccountNumber, string accountType)
         {
             AccountNumber = acccountNumber;
             AccountType = accountType;
-
-            List<Transaction> transactions = null;
-            if (initialDeposit != 0)
-            {
-                var firstDeposit = new Transaction(initialDeposit, DateTime.Now, "Initial Deposit");
-                transactions.Add(firstDeposit);
-            }
-            
-            allTransactions = transactions;
-            
         }
 
         public void MakeDeposit(decimal amount, DateTime date, string note)
@@ -62,10 +52,6 @@ namespace AllCitizensBank
             var withdrawal = new Transaction(-amount, date, note);
             allTransactions.Add(withdrawal);
 
-        }
-        public void CheckBalance()
-        {
-            // show the current balance
         }
 
         public bool IsDecimal(string value)

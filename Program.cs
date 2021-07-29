@@ -11,6 +11,7 @@ namespace AllCitizensBank
         // load user.json
         public static List<User> ListOfUsers = User.LoadUsersFromFile();
         public static string ActiveUser;
+        public static int ActiveAccountIndex;
         public static int ActiveUserIndex { get
             {
                 return ListOfUsers.FindIndex(u => u.UserId == ActiveUser);
@@ -128,90 +129,227 @@ namespace AllCitizensBank
         }
         private static void AccountSelector()
         {
-            // todo user a linq to show the accounts owned by this user, if not show this user doesnt have accounts
+            
             Console.Clear();
             ShowBankLogo($"Accounts");
             if (ListOfUsers[ActiveUserIndex].Accounts == null)
             {
-                Console.WriteLine("You haven't opened an account yet.");
+                
                 string makeNewAccount;
                 bool endLoop = false;
                 do
                 {
-                    Console.Write("Do you want to open a new account now?: ");
+                    Console.WriteLine("----------------------------------\n");
+                    Console.WriteLine($"\tNo account to show\n");
+                    Console.WriteLine("1: Open a new account.");
+                    Console.WriteLine("2: Back to main menu.");
+                    Console.WriteLine("3: Exit.");
+                    Console.Write("Type your option: ");
                     makeNewAccount = Console.ReadLine().ToLower();
-                    switch (makeNewAccount[0])
+                    switch (makeNewAccount)
                     {
-                        case 'y':
+                        case "1":
                             AddNewAccount();
                             endLoop = true;
                             break;
-                        case 'n':
-                            Console.WriteLine("This user doesn't have accounts, goin back to main menu.");
+                        case "2":
                             ActiveUser = null;
-                            Console.ReadKey();
-
                             endLoop = true;
-                            //press any key to go back to main menu
                             break;
-                        case 'q':
+                        case "3":
+                            Console.Clear();
                             System.Environment.Exit(0);
                             break;
                         default:
-                            Console.WriteLine("Please enter yes, no, or quit.");
+                            Console.WriteLine("Please enter 1, 2, or 3.");
                             break;
                     }
                 }
                 while ( endLoop == false );
-                
             }
             else
             {
                 string selectedAccountIndex;
                 int i = 0;
-                foreach (var account in ListOfUsers[ActiveUserIndex].Accounts)
-                {
-                    
-                    Console.WriteLine("______________________________");
-                    Console.WriteLine($"Account {account}: {i}");
-                    Console.WriteLine($"{account.AccountType}: {account.AccountNumber}\t\t{account.Balance}");
-                    Console.WriteLine($"As of: {DateTime.Now}\t\tAvailable Balance");
-                    i++;
-
-                }
-                // give the option to select an account to work with
+                bool correctAnswer = false;
                 do
                 {
-                    Console.Write("Select an Account or type quit to exit: ");
-                    selectedAccountIndex = Console.ReadLine().ToLower();
-                    if (selectedAccountIndex[0] == 'q')
-                        System.Environment.Exit(0);
-                    else
+                    foreach (var account in ListOfUsers[ActiveUserIndex].Accounts)
                     {
 
+                        Console.WriteLine("----------------------------------");
+                        Console.WriteLine($"Account {account}: {i}");
+                        Console.WriteLine($"{account.AccountType}: {account.AccountNumber}\t\t{account.Balance}");
+                        Console.WriteLine($"As of: {DateTime.Now}\t\tAvailable Balance");
+                        i++;
                     }
+                    Console.Write("\nSelect an Account or type quit to exit: ");
+                    selectedAccountIndex = Console.ReadLine().ToLower();
+                    if (selectedAccountIndex[0] == 'q')
+                    {
+                        Console.Clear();
+                        System.Environment.Exit(0);
+                    }
+                    else
+                    {
+                        if (int.TryParse(selectedAccountIndex, out int temp) && temp > -1 && temp < ListOfUsers[ActiveUserIndex].Accounts.Count - 1)
+                        {
+                            ActiveAccountIndex = temp;
+                            correctAnswer = true;
+                        }
+                    }
+
                 }
-                while ((!int.TryParse(selectedAccountIndex, out int temp)) && ( temp < 0 || temp > ListOfUsers[ActiveUserIndex].Accounts.Count - 1));
-
-                
+                while (correctAnswer == false);
             }
-
-
-
         }
         private static void AccountMenu()
         {
-            Console.WriteLine("");
-            Console.WriteLine("1: Deposit");
-            Console.WriteLine("2: Withdrawal");
-            Console.WriteLine("3: Check Balance");
-            Console.WriteLine("4: Transfer");
-            Console.WriteLine("5: Open New Account");
-            Console.WriteLine("6: Transaction History");
-            Console.WriteLine("7: Select Another Account");
-            Console.WriteLine("8: Exit");
-            Console.WriteLine("");
-            Console.Write("Type your option: ");
+            string selectedOption= null;
+            bool endLoop = false;
+            do
+            {
+                ShowBankLogo(ListOfUsers[ActiveUserIndex].Accounts[ActiveAccountIndex].AccountType);
+                Console.WriteLine("----------------------------------");
+                Console.WriteLine($"Avaliable Balance\t\t{ListOfUsers[ActiveUserIndex].Accounts[ActiveAccountIndex].Balance}");
+                Console.WriteLine("\n1: Deposit");
+                Console.WriteLine("2: Withdrawal");
+                Console.WriteLine("3: Transaction History");
+                Console.WriteLine("4: Account Information");
+                Console.WriteLine("5: Back to Accounts menu");
+                Console.WriteLine("6: Exit");
+                Console.Write("\nType your option: ");
+                selectedOption = Console.ReadLine();
+                if (int.TryParse(selectedOption, out int temp) == true && (temp > 0 && temp < 7))
+                {
+                    
+                    switch(temp)
+                    {
+                        case 1:
+                            //ask for the amount for deposit
+                            Console.Write("Deposit amount: ");
+                            decimal amountToDeposit = 0;
+                            decimal.TryParse(Console.ReadLine(), out amountToDeposit);
+                            if (amountToDeposit > 0 && amountToDeposit < decimal.MaxValue)
+                            {
+                                //make deposit
+                                bool endWhile = false;
+                                string note = null;
+                                do
+                                {
+                                    Console.WriteLine("Do you want to add a note?");
+                                    Console.Write("Yes / No : ");
+                                    var answer = Console.ReadLine().ToLower();
+                                    switch (answer[0])
+                                    {
+                                        case 'y':
+                                            Console.Write("Note: ");
+                                            note = Console.ReadLine();
+                                            endWhile = true;
+                                            break;
+                                        case 'n':
+                                            endWhile = true;
+                                            break;
+                                        default:
+                                            Console.WriteLine("Please try again.");
+                                            break;
+                                    }
+                                }
+                                while (endWhile == false);
+                                ListOfUsers[ActiveUserIndex].Accounts[ActiveAccountIndex].MakeDeposit(amountToDeposit, DateTime.Now, note);
+                                User.SaveUsersToFile(ListOfUsers);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid amount. Please try again");
+                            }
+                            break;
+                        case 2:
+                            Console.Write("Withdrawal amount: ");
+                            decimal amountToWithdraw = 0;
+                            decimal.TryParse(Console.ReadLine(), out amountToWithdraw);
+                            if (amountToWithdraw > 0 && amountToWithdraw <= ListOfUsers[ActiveUserIndex].Accounts[ActiveAccountIndex].Balance)
+                            {
+                                //make deposit
+                                bool endWhile = false;
+                                string note = null;
+                                do
+                                {
+                                    Console.WriteLine("Do you want to add a note?");
+                                    Console.Write("Yes / No : ");
+                                    var answer = Console.ReadLine().ToLower();
+                                    switch (answer[0])
+                                    {
+                                        case 'y':
+                                            Console.Write("Note: ");
+                                            note = Console.ReadLine();
+                                            endWhile = true;
+                                            break;
+                                        case 'n':
+                                            endWhile = true;
+                                            break;
+                                        default:
+                                            Console.WriteLine("Please try again.");
+                                            break;
+                                    }
+                                }
+                                while (endWhile == false);
+                                ListOfUsers[ActiveUserIndex].Accounts[ActiveAccountIndex].MakeWithdrawal(amountToWithdraw, DateTime.Now, note);
+                                User.SaveUsersToFile(ListOfUsers);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid amount. Please try again");
+                            }
+                            break;
+                        case 3:
+                            // todo show the transactions
+                            DateTime startDate;
+                            DateTime endDate;
+                            startDate = DateTime.Now.AddMonths(1);
+                            endDate = DateTime.Now;
+
+                            List<Transaction> ActiveUserTransactions = ListOfUsers[ActiveUserIndex].Accounts[ActiveAccountIndex].allTransactions;
+                            var transactions = from t in ActiveUserTransactions
+                                               where t.Date >= startDate && t.Date <= endDate
+                                               select t;
+
+                            Console.WriteLine("Transactions of the last 30 days: \n");
+                            foreach (var item in transactions)
+                            {
+                                Console.WriteLine($"{item.Note}\n{item.Date}\t\t{item.Amount}");
+                                Console.WriteLine("__________________________________");
+                            }
+                            Console.WriteLine("Press any key to go back to the account: ");
+                            Console.ReadKey();
+                            break;
+                        case 4:
+                            //show account number
+                            Console.WriteLine($"\nAccount number: {ListOfUsers[ActiveUserIndex].Accounts[ActiveAccountIndex].AccountNumber}");
+                            Console.ReadKey();                           
+                            break;
+                        case 5:
+                            endLoop = true;
+                            break;
+                        case 6:
+                            Console.Clear();
+                            System.Environment.Exit(0);
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+                else
+                {
+                    Console.WriteLine("Invalid option, try again.");
+                    Console.ReadKey();
+                    Console.Clear();
+                }
+            }
+            while (endLoop == false);
+
+            
         }
         public static void ShowBankLogo(string menuType)
         {
@@ -253,9 +391,9 @@ namespace AllCitizensBank
             Console.Write("Repeat Password: ");
             repeatPass = Console.ReadLine();
             
-            Console.Write("Pin(must have 4 digits): ");
+            Console.Write("Pin (must have 4 digits): ");
             pin = Console.ReadLine();
-            Console.Write("Pin: ");
+            Console.Write("Repeat Pin: ");
             repeatPin = Console.ReadLine();
 
             while (name.Any(char.IsDigit) || String.IsNullOrEmpty(name))
@@ -291,9 +429,9 @@ namespace AllCitizensBank
             }
             while (pin.Length != 4 || pin != repeatPin || !pin.All(char.IsDigit))
             {
-                Console.Write("Pin(must have 4 digits): ");
+                Console.Write("Pin (must have 4 digits): ");
                 pin = Console.ReadLine();
-                Console.Write("Pin: ");
+                Console.Write("Repeat Pin: ");
                 repeatPin = Console.ReadLine();
             }
 
@@ -492,18 +630,21 @@ namespace AllCitizensBank
         public static void NewAccount(string accountType)
         {
             string answer;
+            bool endLoop = false;
             do
             {
                 Console.WriteLine("Do you want to make an initial deposit?");
+                Console.Write("Yes/No: ");
                 answer = Console.ReadLine();
                 decimal amount = 0;
-
-                if (answer[0].ToString().ToLower() == "y")
+                if ((answer[0].ToString().ToLower() == "y") || (answer[0].ToString().ToLower() == "n"))
+                    endLoop = true;
+                    if (answer[0].ToString().ToLower() == "y")
                 {
                     var repeat = true;
                     do
                     {
-                        Console.WriteLine("Enter deposit amount: ");
+                        Console.Write("Enter deposit amount: ");
                         if (decimal.TryParse(Console.ReadLine(), out amount) && amount > 0)
                         {
                             repeat = false;
@@ -513,18 +654,25 @@ namespace AllCitizensBank
                     }
                     while (repeat == true);
                 }
-
+                
                 var newAccountnumber = BankData.BankAccountSeed;
                 BankData.MakeNewSeed();
-                var newAccount = new Account(newAccountnumber, accountType, amount);
+                Account newAccount = new(newAccountnumber, accountType);
                 BankData.SaveBankDataToFile();
                 //var index = ListOfUsers.FindIndex(u => u.UserId == ActiveUser);
                 ListOfUsers[ActiveUserIndex].Accounts.Add(newAccount);
+                int indexNewAccount = ListOfUsers[ActiveUserIndex].Accounts.FindIndex(a => a.AccountNumber == newAccountnumber);
+                
+                if (amount > 0)
+                {
+                    ListOfUsers[ActiveUserIndex].Accounts[indexNewAccount].MakeDeposit(amount, DateTime.Now, "Initial Deposit");
+                }
                 User.SaveUsersToFile(ListOfUsers);
                 Console.WriteLine($"{ListOfUsers[ActiveUserIndex].FirstName} {ListOfUsers[ActiveUserIndex].LastName} added a new {newAccount.AccountType} account with a initial deposit of {newAccount.Balance}");
-                
+                Console.ReadKey();
+
             }
-            while ((answer[0].ToString().ToLower() != "y") || (answer[0].ToString().ToLower() != "n"));
+            while (endLoop == false); ;
         }
     }
 }
