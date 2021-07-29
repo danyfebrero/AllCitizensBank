@@ -24,6 +24,7 @@ namespace AllCitizensBank
         {
             AccountNumber = acccountNumber;
             AccountType = accountType;
+            allTransactions = new();
         }
 
         public void MakeDeposit(decimal amount, DateTime date, string note)

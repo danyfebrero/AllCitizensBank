@@ -53,6 +53,7 @@ namespace AllCitizensBank
                 case "2":
                     NewUser();
                     AddNewAccount();
+                    AccountSelector();
                     break;
                 case "3":
                     RecoverPassOrId();
@@ -132,6 +133,7 @@ namespace AllCitizensBank
             
             Console.Clear();
             ShowBankLogo($"Accounts");
+            Console.WriteLine("----------------------------------");
             if (ListOfUsers[ActiveUserIndex].Accounts == null)
             {
                 
@@ -169,6 +171,7 @@ namespace AllCitizensBank
             }
             else
             {
+                //todo doesnt show the account menu and the loop keeps goin because it can read anything
                 string selectedAccountIndex;
                 int i = 0;
                 bool correctAnswer = false;
@@ -177,14 +180,22 @@ namespace AllCitizensBank
                     foreach (var account in ListOfUsers[ActiveUserIndex].Accounts)
                     {
 
-                        Console.WriteLine("----------------------------------");
-                        Console.WriteLine($"Account {account}: {i}");
-                        Console.WriteLine($"{account.AccountType}: {account.AccountNumber}\t\t{account.Balance}");
-                        Console.WriteLine($"As of: {DateTime.Now}\t\tAvailable Balance");
+                        Console.WriteLine("__________________________________");
+                        Console.WriteLine($"Account: {i}\n");
+                        Console.WriteLine($"{account.AccountType} Account");
+                        Console.WriteLine($"Available Balance: {account.Balance}");
+                        Console.WriteLine($"As of: {DateTime.Now.ToString("dd/MM/yyyy")}");
                         i++;
                     }
-                    Console.Write("\nSelect an Account or type quit to exit: ");
+                    Console.Write("\nSelect an Account, cancel to go back or quit to exit: ");
                     selectedAccountIndex = Console.ReadLine().ToLower();
+7
+                        if (selectedAccountIndex[0] == 'c')
+                    {
+                        Console.Clear();
+                        ActiveUser = null;
+                        break;
+                    }
                     if (selectedAccountIndex[0] == 'q')
                     {
                         Console.Clear();
@@ -196,6 +207,8 @@ namespace AllCitizensBank
                         {
                             ActiveAccountIndex = temp;
                             correctAnswer = true;
+                            AccountMenu();
+                            
                         }
                     }
 
@@ -435,7 +448,7 @@ namespace AllCitizensBank
                 repeatPin = Console.ReadLine();
             }
 
-            var newUser = new User(userId, pass, name, lastName, pin ,null);
+            var newUser = new User(userId, pass, name, lastName, pin ,new());
 
             ListOfUsers.Add(newUser);
             User.SaveUsersToFile(ListOfUsers);
@@ -585,8 +598,6 @@ namespace AllCitizensBank
                             Console.WriteLine("Please introduce your Pin: ");
                             pin = Console.ReadLine().ToLower();
                             
-                            // if one user have same name, last name, and pin
-                            // give the user id to the user
                             var result = ListOfUsers.Where(u => u.FirstName == firstName).Where(u => u.LastName == lastName).Where(u => u.Pin == pin);
                             if (result.Count() == 0)
                             {
@@ -658,7 +669,7 @@ namespace AllCitizensBank
                 var newAccountnumber = BankData.BankAccountSeed;
                 BankData.MakeNewSeed();
                 Account newAccount = new(newAccountnumber, accountType);
-                BankData.SaveBankDataToFile();
+                
                 //var index = ListOfUsers.FindIndex(u => u.UserId == ActiveUser);
                 ListOfUsers[ActiveUserIndex].Accounts.Add(newAccount);
                 int indexNewAccount = ListOfUsers[ActiveUserIndex].Accounts.FindIndex(a => a.AccountNumber == newAccountnumber);
@@ -668,8 +679,10 @@ namespace AllCitizensBank
                     ListOfUsers[ActiveUserIndex].Accounts[indexNewAccount].MakeDeposit(amount, DateTime.Now, "Initial Deposit");
                 }
                 User.SaveUsersToFile(ListOfUsers);
-                Console.WriteLine($"{ListOfUsers[ActiveUserIndex].FirstName} {ListOfUsers[ActiveUserIndex].LastName} added a new {newAccount.AccountType} account with a initial deposit of {newAccount.Balance}");
+                BankData.SaveBankDataToFile();
+                Console.WriteLine($"Added a new {newAccount.AccountType} account with a initial deposit of {newAccount.Balance}");
                 Console.ReadKey();
+
 
             }
             while (endLoop == false); ;
