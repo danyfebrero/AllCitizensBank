@@ -50,7 +50,7 @@ namespace AllCitizensBank
                 //checks if users.json exist and creates it if not
                 if (!file.Exists)
                 {
-                    var AdminUser = new User("admin","1234","Administrator",null,"1111",null);
+                    var AdminUser = new User("admin","1234","Administrator","","1111",new());
                     ListOfUsers.Add(AdminUser);
                     SaveUsersToFile(ListOfUsers);
                 }

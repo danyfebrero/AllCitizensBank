@@ -11,7 +11,7 @@ namespace AllCitizensBank
         // load user.json
         public static List<User> ListOfUsers = User.LoadUsersFromFile();
         public static string ActiveUser;
-        public static int ActiveAccountIndex;
+        
         public static int ActiveUserIndex { get
             {
                 return ListOfUsers.FindIndex(u => u.UserId == ActiveUser);
@@ -134,7 +134,7 @@ namespace AllCitizensBank
             Console.Clear();
             ShowBankLogo($"Accounts");
             Console.WriteLine("----------------------------------");
-            if (ListOfUsers[ActiveUserIndex].Accounts == null)
+            if (ListOfUsers[ActiveUserIndex].Accounts.Count == 0)
             {
                 
                 string makeNewAccount;
@@ -171,52 +171,74 @@ namespace AllCitizensBank
             }
             else
             {
-                //todo doesnt show the account menu and the loop keeps goin because it can read anything
+
+                //todo chages the account number
                 string selectedAccountIndex;
-                int i = 0;
+                int i;
                 bool correctAnswer = false;
                 do
                 {
+                    i = 0;
                     foreach (var account in ListOfUsers[ActiveUserIndex].Accounts)
                     {
-
+                        i++;
+                        //i = ListOfUsers[ActiveUserIndex].Accounts.FindIndex(a => a.AccountNumber == account.AccountNumber)+1;
                         Console.WriteLine("__________________________________");
                         Console.WriteLine($"Account: {i}\n");
                         Console.WriteLine($"{account.AccountType} Account");
                         Console.WriteLine($"Available Balance: {account.Balance}");
                         Console.WriteLine($"As of: {DateTime.Now.ToString("dd/MM/yyyy")}");
-                        i++;
+                        
+                        
                     }
-                    Console.Write("\nSelect an Account, cancel to go back or quit to exit: ");
+                    Console.Write("\nEnter Account number, New (to add a accounts), Back (to go back) or Quit (to exit): ");
                     selectedAccountIndex = Console.ReadLine().ToLower();
-7
-                        if (selectedAccountIndex[0] == 'c')
+
+                    if (selectedAccountIndex[0] == 'b')
                     {
                         Console.Clear();
+
                         ActiveUser = null;
                         break;
                     }
-                    if (selectedAccountIndex[0] == 'q')
+                    else if (selectedAccountIndex[0] == 'n')
+                    {
+                        AddNewAccount();
+                        Console.Clear();
+                    }
+                    else if (selectedAccountIndex[0] == 'q')
                     {
                         Console.Clear();
                         System.Environment.Exit(0);
                     }
+                    else if (int.TryParse(selectedAccountIndex, out int tempAccountIndex))
+                    {
+                        tempAccountIndex = tempAccountIndex - 1;
+                        if (tempAccountIndex > -1 && tempAccountIndex < ListOfUsers[ActiveUserIndex].Accounts.Count)
+                        {
+                            Console.Clear();
+                            AccountMenu(tempAccountIndex);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{selectedAccountIndex} is an invalid account.");
+                            Console.ReadKey();
+                        }
+
+                    }
                     else
                     {
-                        if (int.TryParse(selectedAccountIndex, out int temp) && temp > -1 && temp < ListOfUsers[ActiveUserIndex].Accounts.Count - 1)
-                        {
-                            ActiveAccountIndex = temp;
-                            correctAnswer = true;
-                            AccountMenu();
-                            
-                        }
+                        Console.WriteLine($"{selectedAccountIndex} is an invalid option.");
+                        Console.ReadKey();
+                        
                     }
-
+                    Console.Clear();
+                    
                 }
                 while (correctAnswer == false);
             }
         }
-        private static void AccountMenu()
+        private static void AccountMenu(int ActiveAccountIndex)
         {
             string selectedOption= null;
             bool endLoop = false;
@@ -246,6 +268,7 @@ namespace AllCitizensBank
                             if (amountToDeposit > 0 && amountToDeposit < decimal.MaxValue)
                             {
                                 //make deposit
+                                
                                 bool endWhile = false;
                                 string note = null;
                                 do
@@ -316,19 +339,11 @@ namespace AllCitizensBank
                             }
                             break;
                         case 3:
-                            // todo show the transactions
-                            DateTime startDate;
-                            DateTime endDate;
-                            startDate = DateTime.Now.AddMonths(1);
-                            endDate = DateTime.Now;
+                            //show the transactions
 
-                            List<Transaction> ActiveUserTransactions = ListOfUsers[ActiveUserIndex].Accounts[ActiveAccountIndex].allTransactions;
-                            var transactions = from t in ActiveUserTransactions
-                                               where t.Date >= startDate && t.Date <= endDate
-                                               select t;
-
-                            Console.WriteLine("Transactions of the last 30 days: \n");
-                            foreach (var item in transactions)
+                            Console.Clear();
+                            Console.WriteLine("Transactions: \n");
+                            foreach (var item in ListOfUsers[ActiveUserIndex].Accounts[ActiveAccountIndex].allTransactions)
                             {
                                 Console.WriteLine($"{item.Note}\n{item.Date}\t\t{item.Amount}");
                                 Console.WriteLine("__________________________________");
@@ -337,12 +352,14 @@ namespace AllCitizensBank
                             Console.ReadKey();
                             break;
                         case 4:
-                            //show account number
+                            //todo show account number 
+
                             Console.WriteLine($"\nAccount number: {ListOfUsers[ActiveUserIndex].Accounts[ActiveAccountIndex].AccountNumber}");
                             Console.ReadKey();                           
                             break;
                         case 5:
                             endLoop = true;
+                            Console.Clear();
                             break;
                         case 6:
                             Console.Clear();
@@ -681,6 +698,7 @@ namespace AllCitizensBank
                 User.SaveUsersToFile(ListOfUsers);
                 BankData.SaveBankDataToFile();
                 Console.WriteLine($"Added a new {newAccount.AccountType} account with a initial deposit of {newAccount.Balance}");
+                Console.WriteLine($"Press any key to continue.");
                 Console.ReadKey();
 
 
